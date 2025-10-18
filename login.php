@@ -1,33 +1,29 @@
 <?php
+global $conn;
 session_start();
-require_once 'db.php';
+require_once 'functions.php';
 
-$message = "";
+$error = "";
+$message = isset($_GET['message']) ? $_GET['message'] : "";
+
+if (is_logged_in()) {
+    header("Location: client/");
+    exit;
+}
 
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
-    $username = trim($_POST['username']);
+    $email = trim($_POST['email']);
     $password = $_POST['password'];
 
-    $query = "SELECT * FROM users WHERE username = ?";
-    $stmt = mysqli_prepare($conn, $query);
-    mysqli_stmt_bind_param($stmt, "s", $username);
-    mysqli_stmt_execute($stmt);
-    $result = mysqli_stmt_get_result($stmt);
-    $user = mysqli_fetch_assoc($result);
-
-    if ($user && password_verify($password, $user['password_hash'])) {
-        $_SESSION['username'] = $user['username'];
-        $_SESSION['role'] = $user['role'];
-        $_SESSION['user_id'] = $user['id'];
-
-        if ($user['role'] === 'admin') {
+    if (attempt_login($email, $password)) {
+        if ($_SESSION['role'] === 'admin') {
             header("Location: admin/");
         } else {
             header("Location: client/");
         }
         exit;
     } else {
-        $message = "❌ Identifiants incorrects.";
+        $error = "Identifiants incorrects.";
     }
 }
 ?>
@@ -35,19 +31,38 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 <!DOCTYPE html>
 <html lang="fr">
 <head>
-  <meta charset="UTF-8">
-  <title>Connexion</title>
+    <meta charset="UTF-8">
+    <link rel="stylesheet" href="styleform.css">
+    <title>Connexion</title>
 </head>
 <body>
-  <h2>Connexion</h2>
-  <form method="post">
-    <label>Nom d’utilisateur :</label><br>
-    <input type="text" name="username" required><br><br>
-    <label>Mot de passe :</label><br>
-    <input type="password" name="password" required><br><br>
-    <button type="submit">Se connecter</button>
-  </form>
-  <p style="color:red;"><?= $message ?></p>
-  <p><a href="index.php">⬅️ Retour</a></p>
+
+<div class="container">
+    <form id="login-form" class="form" action="login.php" method="POST">
+        <h2>Connexion</h2>
+
+
+        <?php if ($message): ?>
+            <p style="color:green;"><?= $message ?></p>
+        <?php endif; ?>
+
+        <label for="login-email">Email :</label>
+        <input type="email" id="login-email" name="email" required>
+
+        <label for="login-password">Mot de passe :</label>
+        <input type="password" id="login-password" name="password" required>
+
+        <?php if ($error): ?>
+            <p style="color:red;"><?= $error ?></p>
+        <?php endif; ?>
+
+        <p><a href="index.php"> Accueil</a></p>
+        <p><a href="register.php"> S'inscrire</a></p>
+
+        <button type="submit">Se connecter</button>
+    </form>
+</div>
+
+
 </body>
 </html>

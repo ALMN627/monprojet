@@ -145,3 +145,7 @@ body{
     display: flex!important;
     padding: 20px;
 }
+
+.text-primary{
+    color: #f63e4e!important;
+}
