@@ -14,11 +14,14 @@ function is_admin()
 {
     return isset($_SESSION['role']) && $_SESSION['role'] === 'admin';
 }
+function base_url($path = '') {
+    $root = "/monprojet"; 
+    return $root . '/' . ltrim($path,'/');
+}
 
-function require_login()
-{
+function require_login() {
     if (!is_logged_in()) {
-        header('Location: /login.php');
+        header('Location: ' . base_url('login.php'));
         exit;
     }
 }
