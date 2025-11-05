@@ -2,7 +2,7 @@
 // db.php (connexion à la base existante)
 $host = "localhost";
 $user = "root";
-$pass = "root";
+$pass = "";
 $dbname = "my_app_db";
 
 $conn = mysqli_connect($host, $user, $pass);

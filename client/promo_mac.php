@@ -49,7 +49,7 @@ if (isset($_POST['ajouter_panier'])) {
 </head>
 <body>
 
-<h1>💻 Promotions sur les MacBook</h1>
+<h1>Promotions sur les MacBook</h1>
 <p>Découvrez nos offres spéciales limitées sur les produits Apple.</p>
 
 <?php foreach ($macs as $mac): ?>
